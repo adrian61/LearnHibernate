@@ -1,6 +1,8 @@
 package org.example.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "instructor")
@@ -23,6 +25,12 @@ public class Instructor {
 	@JoinColumn(name = "instructor_detail_id")
 	private InstructorDetail instructorDetail;
 
+	@OneToMany(fetch=FetchType.LAZY,
+			mappedBy="instructor",
+			cascade= {CascadeType.PERSIST, CascadeType.MERGE,
+					CascadeType.DETACH, CascadeType.REFRESH})
+	private List<Course> courseList;
+
 	public Instructor(String firstName, String lastName, String email) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -35,11 +43,10 @@ public class Instructor {
 	@Override
 	public String toString() {
 		return "Instructor{" +
-				"id=" + id +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
 				", email='" + email + '\'' +
-				", instructorDetail=" + instructorDetail +
+				", instructorDetail=" + instructorDetail+
 				'}';
 	}
 
@@ -73,5 +80,21 @@ public class Instructor {
 
 	public void setInstructorDetail(InstructorDetail instructorDetail) {
 		this.instructorDetail = instructorDetail;
+	}
+
+	public List<Course> getCourseList() {
+		return courseList;
+	}
+
+	public void setCourseList(List<Course> courseList) {
+		this.courseList = courseList;
+	}
+
+	public void add(Course course) {
+		if (courseList == null) {
+			courseList = new ArrayList<>();
+		}
+		courseList.add(course);
+		course.setInstructor(this);
 	}
 }
