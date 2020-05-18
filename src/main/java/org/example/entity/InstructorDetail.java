@@ -12,14 +12,19 @@ public class InstructorDetail {
 	@Column(name = "youtube_channel")
 	String youtubeChannel;
 
-	@Column(name ="hobby")
+	@Column(name = "hobby")
 	String hobby;
+
+	@OneToOne(mappedBy = "instructorDetail")
+	private Instructor instructor;
 
 	public InstructorDetail(String youtubeChannel, String hobby) {
 		this.youtubeChannel = youtubeChannel;
 		this.hobby = hobby;
 	}
-	public InstructorDetail(){}
+
+	public InstructorDetail() {
+	}
 
 	@Override
 	public String toString() {
@@ -44,5 +49,13 @@ public class InstructorDetail {
 
 	public void setHobby(String hobby) {
 		this.hobby = hobby;
+	}
+
+	public Instructor getInstructor() {
+		return instructor;
+	}
+
+	public void setInstructor(Instructor instructor) {
+		this.instructor = instructor;
 	}
 }
