@@ -6,6 +6,9 @@ import org.example.entity.InstructorDetail;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
+
+import java.util.List;
 
 public class EagerLazyDemo {
 	public static void main(String[] args) {
@@ -33,11 +36,27 @@ public class EagerLazyDemo {
 			session.getTransaction().commit();
 
 			// Uncomment to test lazy loading after close session.
-			System.out.println(tempInstructor.getCourseList());
+			// System.out.println(tempInstructor.getCourseList());
 
+			//Issue
+
+			try {
+				System.out.println(tempInstructor.getCourseList());
+			} catch (Exception e) {
+				session = sessionFactory.getCurrentSession();
+				session.beginTransaction();
+				Query<Course> query = session.createQuery("select c from Course c "
+								+ "where c.instructor.id=:theInstructorId",
+						Course.class);
+				query.setParameter("theInstructorId", 9);
+				List<Course> tempCourses = query.getResultList();
+
+				System.out.println("tempCourses: " + tempCourses);
+				session.getTransaction().commit();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		sessionFactory.close();
 	}
 }
